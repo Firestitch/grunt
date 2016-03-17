@@ -97,13 +97,12 @@
                                     connect.static('app'),
                                     connect().use('/bower_components', connect.static('./bower_components'))
                                 ];
-
                             }
                         }
                     },
                     dist: {
                         options: {
-                            port: 9002,
+                            port: gruntConfig + 20000,
                             hostname: 'localhost',
                             base: '<%= yeoman.dist %>'
                         }
