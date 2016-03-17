@@ -79,11 +79,11 @@
                 // The actual grunt server settings
                 connect: {
                     options: {
-                        livereload: gruntConfig + 30000
+                        livereload: gruntConfig.port + 30000
                     },
                     local: {
                         options: {
-                            port: gruntConfig,
+                            port: gruntConfig.port,
                             hostname: 'localhost',
                             open: true,
                             base: [
@@ -102,7 +102,7 @@
                     },
                     dist: {
                         options: {
-                            port: gruntConfig + 20000,
+                            port: gruntConfig.port + 20000,
                             hostname: 'localhost',
                             base: '<%= yeoman.dist %>'
                         }
