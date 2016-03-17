@@ -1,13 +1,7 @@
-// Generated on 2014-10-27 using generator-angular 0.9.8
-'use strict';
+(function() {
+    "use strict"; //enable ECMAScript 5 Strict Mode
 
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to recursively match all subfolders:
-// 'test/spec/**/*.js'
-
-module.exports = function(grunt) {
+    function init(grunt) {
 
         // Load grunt tasks automatically
         require('load-grunt-tasks')(grunt);
@@ -628,4 +622,12 @@ module.exports = function(grunt) {
 
                 return grunt.task.run(tasks);
             });
-        };
+    }
+
+    exports = module.exports = {
+        init: init
+    };
+})();
+
+
+
