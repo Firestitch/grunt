@@ -11,11 +11,7 @@
 
         var modRewrite = require('connect-modrewrite');
 
-        // Configurable paths for the application
-        var appConfig = {
-            app: require('./../bower.json').appPath || 'app',
-            dist: 'dist'
-        };
+        var gruntConfig = require('./../grunt.json');
 
         grunt.template.addDelimiters('handlebars-like-delimiters', '{{', '}}');
 
@@ -23,7 +19,10 @@
         grunt.initConfig({
 
                 // Project settings
-                yeoman: appConfig,
+                yeoman: {
+                            app: 'app',
+                            dist: 'dist'
+                        },
 
                 // Watches files for changes and runs tasks based on the changed files
                 watch: {
@@ -80,11 +79,11 @@
                 // The actual grunt server settings
                 connect: {
                     options: {
-                        livereload: 35729
+                        livereload: gruntConfig + 30000
                     },
                     local: {
                         options: {
-                            port: 9000,
+                            port: gruntConfig,
                             hostname: 'localhost',
                             open: true,
                             base: [
@@ -95,7 +94,7 @@
 
                                 return [modRewrite(['^[^\\.]*$ /index.html [L]']),
                                     connect.static('.tmp'),
-                                    connect.static(appConfig.app),
+                                    connect.static('app'),
                                     connect().use('/bower_components', connect.static('./bower_components'))
                                 ];
 
