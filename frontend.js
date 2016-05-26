@@ -289,9 +289,9 @@
                             CONFIG: grunt.file.readJSON('config/staging.json'),
                             BUILD: {'build':'staging', 'build_number':grunt.option('build_number')}
                         }
-                    }
+                    }                  
                 },
-                
+
                 svgmin: {
                     dist: {
                         files: [{
@@ -551,6 +551,10 @@
                 grunt.task.run('useminPrepare');
             });
 
+            grunt.registerTask('buildjson', 'Build JSON', function() {
+                grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '"}');
+            });
+
             grunt.registerTask('build', 'Compile', function(target, build_number) {
 
                 if (arguments.length === 0) {
@@ -560,6 +564,7 @@
 
                 var tasks = [   'clean:dist',
                                 'ngconstant:' + target,
+                                'buildjson',
                                 'wiredep'
                             ];
 
@@ -596,6 +601,8 @@
                         //'template'
                     ]);
                 }
+
+                
 
                 return grunt.task.run(tasks);
             });
