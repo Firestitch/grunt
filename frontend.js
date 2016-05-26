@@ -356,42 +356,19 @@
                                     'views/**/*.html',
                                     'images/{,*/}*.{webp}',
                                     'images/*',
-                                    'fonts/**/*'
                                 ]
                             }, {
                                 expand: true,
                                 cwd: '.tmp/images',
                                 dest: '<%= yeoman.dist %>/images',
                                 src: ['generated/*']
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/bootstrap/dist',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/font-awesome',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/material-design-icons/iconfont',
-                                src: ['*.*'],
-                                dest: '<%= yeoman.dist %>/iconfont'
-                            }
-                        ]
-                    },
-                    iconfont: {
-                        files: [
+                            },
                             {
                                 expand: true,
                                 dot: true,
-                                cwd: 'bower_components/material-design-icons/iconfont',
-                                src: ['*.*'],
-                                dest: '<%= yeoman.app %>/iconfont'
+                                cwd: 'app/styles',
+                                src: ['fonts/*.*'],
+                                dest: '<%= yeoman.dist %>/styles'
                             }
                         ]
                     },
@@ -524,7 +501,6 @@
                         'wiredep',
                         'concurrent:server',
                         'autoprefixer',
-                        'copy:iconfont',
                         'connect:local',
                         'watch'
                     ]);
