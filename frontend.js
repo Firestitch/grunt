@@ -563,8 +563,7 @@
                 }
 
                 var tasks = [   'clean:dist',
-                                'ngconstant:' + target,
-                                'buildjson',
+                                'ngconstant:' + target,                                
                                 'wiredep'
                             ];
 
@@ -582,6 +581,7 @@
                         'usemin',
                         'clean:cleanup',
                         //'template'
+                        'buildjson'
                     ]);
                 } else {
                     tasks = grunt.util._.union(tasks, ['useminPrepare',
@@ -599,6 +599,7 @@
                         'htmlmin',
                         'clean:cleanup',
                         //'template'
+                        'buildjson'
                     ]);
                 }
 
