@@ -356,6 +356,7 @@
                                     'views/**/*.html',
                                     'images/{,*/}*.{webp}',
                                     'images/*',
+                                    'images/**/*',
                                     'fonts/**/*'
                                 ]
                             }, {
