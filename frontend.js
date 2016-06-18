@@ -357,7 +357,7 @@
                                     'images/{,*/}*.{webp}',
                                     'images/*',
                                     'images/**/*',
-                                    'fonts/**/*'
+                                    'fonts/**/*',
                                     'styles/fonts**/*'
                                 ]
                             }, {
