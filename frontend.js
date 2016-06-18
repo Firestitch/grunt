@@ -358,6 +358,7 @@
                                     'images/*',
                                     'images/**/*',
                                     'fonts/**/*'
+                                    'styles/fonts**/*'
                                 ]
                             }, {
                                 expand: true,
