@@ -590,7 +590,6 @@
 
                 var tasks = [   'clean:dist',
                                 'ngconstant:' + target,
-                                'buildjson',
                                 'wiredep'
                             ];
 
@@ -627,8 +626,8 @@
                         //'template'
                     ]);
                 }
-
                 
+                tasks.push('buildjson');
 
                 return grunt.task.run(tasks);
             });
