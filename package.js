@@ -20,14 +20,7 @@
             dist: 'dist'
         };
 
-        // Define the configuration for all the tasks
-        grunt.initConfig({
-
-                // Project settings
-                yeoman: appConfig,
-
-                // Watches files for changes and runs tasks based on the changed files
-                watch: {
+        var watch = {
                     compass: {
                         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
                         tasks: ['compass:server', 'autoprefixer']
@@ -40,10 +33,6 @@
                             '.tmp/styles/{,*/}*.css',
                             '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                         ]
-                    },                    
-                    ngdocs: {
-                        files: ['app/scripts/{,*/}*.js'],
-                        tasks: ['ngdocs']
                     },
                     buildscss: {
                         files: ['app/styles/{,*/}*.*css'],
@@ -53,7 +42,24 @@
                         files: ['app/**/*.{js,html}'],
                         tasks: ['clean:buildjs','ngtemplates','concat:build']  
                     }
-                },
+                };
+                
+
+        if(bower.docs) {
+            watch.ngdocs =  {
+                                files: ['app/scripts/{,*/}*.js'],
+                                tasks: ['ngdocs']
+                            };
+        }
+
+        // Define the configuration for all the tasks
+        grunt.initConfig({
+
+                // Project settings
+                yeoman: appConfig,
+
+                // Watches files for changes and runs tasks based on the changed files
+                watch: watch,
 
                 ngtemplates: {                   
                     app: {
