@@ -248,6 +248,13 @@
                                 cwd: 'app/styles/directives',
                                 src: ["*.*"],
                                 dest: '../dist'
+                            },
+                            {
+                                expand: true,
+                                dot: true,
+                                cwd: 'app/styles/includes',
+                                src: ["*.*"],
+                                dest: '../dist'
                             }
                         ]
                     }
