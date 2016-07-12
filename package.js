@@ -41,16 +41,12 @@
                     build: {
                         files: ['app/**/*.{js,html}'],
                         tasks: ['clean:buildjs','ngtemplates','concat:build']  
+                    },
+                    ngdocs: {
+                        files: ['app/scripts/{,*/}*.js'],
+                        tasks: ['ngdocs']
                     }
                 };
-                
-
-        if(bower.docs) {
-            watch.ngdocs =  {
-                                files: ['app/scripts/{,*/}*.js'],
-                                tasks: ['ngdocs']
-                            };
-        }
 
         // Define the configuration for all the tasks
         grunt.initConfig({
@@ -111,7 +107,7 @@
                         options: {
                             port: parseInt(bower.port) + 400,
                             hostname: 'localhost',
-                            base: '../../gh-pages/'
+                            base: 'docs/'
                         }
                     }
                 },
@@ -289,17 +285,17 @@
 
                 ngdocs: {
                   options: {
-                    dest: '../../gh-pages',
+                    dest: 'docs',
                     html5Mode: false,
                     startPage: '/api',
                     title: "Documentation",
                     titleLink: "/",
                     bestMatch: true,
                     styles: [
-                        '<%= yeoman.app %>/styles/docs.css'
-                    ]                  
+                        'grunt/styles/ngdocs.css'
+                    ]
                   },
-                  all: ['<%= yeoman.app %>/scripts/{,*/}*.js']
+                  all: ['app/scripts/{,*/}*.js']
                 }          
             });
 
@@ -312,6 +308,7 @@
                     'autoprefixer',
                     'connect:local',
                     'connect:docs',
+                    'ngdocs',
                     'watch'
                 ]);
             });

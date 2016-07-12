@@ -1,0 +1,70 @@
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+  width: 90%;
+  margin: auto;
+}
+
+.span9 {
+  width: auto;
+  padding-left: 30px;
+}
+
+[class*="span"] {
+	display: table-cell;
+	float: none;
+}
+
+.improve-docs,
+.view-source {
+	display: none;
+}
+
+.nav-header.module {
+	display: none;
+}
+
+.nav .nav-header.section {
+	margin-top: 20px;
+}
+
+.nav .nav-header:nth-child(2) {
+	margin-top: 0;
+}
+
+h1 {
+	font-size: 21px;
+}
+
+h1 div {
+	display: inline;
+}
+
+h1 code {
+	font-size: 25px;
+}
+
+h1 .hint {
+	display: none;
+}
+
+h2 {
+	font-size: 19px;
+}
+
+h3 {
+    font-size: 18.5px;
+}
+
+ul.methods {
+	margin: 0;
+}
+
+ul.methods li {
+	list-style: none;
+}
+
+code {
+	color: #F47D20;
+}
