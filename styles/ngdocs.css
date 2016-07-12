@@ -68,3 +68,13 @@ ul.methods li {
 code {
 	color: #F47D20;
 }
+
+.variables-matrix ul label {
+	display: inline;
+	margin: 0 10px 0 0;
+	color: #FF9900;
+}
+
+.variables-matrix  ul li {
+    list-style-type: initial;
+}
