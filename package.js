@@ -309,6 +309,8 @@
                     'connect:local',
                     'connect:docs',
                     'ngdocs',
+                    'ngtemplates',
+                    'concat:build',
                     'watch'
                 ]);
             });
