@@ -13,7 +13,7 @@
 
         var modRewrite = require('connect-modrewrite');
         var bower = require('./../bower.json');
-       
+
         // Configurable paths for the application
         var appConfig = {
             app: 'app',
@@ -36,15 +36,19 @@
                     },
                     buildscss: {
                         files: ['app/styles/{,*/}*.*css'],
-                        tasks: ['clean:buildscss','copy:buildscss'] 
+                        tasks: ['clean:buildscss','copy:buildscss']
                     },
                     build: {
                         files: ['app/**/*.{js,html}'],
-                        tasks: ['clean:buildjs','ngtemplates','concat:build']  
+                        tasks: ['clean:buildjs','ngtemplates','concat:build']
                     },
                     ngdocs: {
                         files: ['app/scripts/{,*/}*.js'],
                         tasks: ['ngdocs']
+                    },
+                    status: {
+                        files: ['app/scripts/{,*/}*.js','app/styles/{,*/}*.*css'],
+                        tasks: ['status']
                     }
                 };
 
@@ -57,7 +61,7 @@
                 // Watches files for changes and runs tasks based on the changed files
                 watch: watch,
 
-                ngtemplates: {                   
+                ngtemplates: {
                     app: {
                         options: {
                             module: bower.name,
@@ -70,13 +74,13 @@
 
                 concat: {
                     options: {
-                     
+
                     },
                     build: {
                       src: ['app/scripts/filters/filter.js','app/scripts/directives/directive.js','app/scripts/services/service.js','.tmp/directivetemplate.js'],
                       dest: '../dist/' + bower.namespace + '.js',
                     },
-                },              
+                },
 
                 // The actual grunt server settings
                 connect: {
@@ -281,7 +285,7 @@
                             dest: '<%= yeoman.app %>/config/config.js'
                         }
                     }
-                },   
+                },
 
                 ngdocs: {
                   options: {
@@ -296,12 +300,12 @@
                     ]
                   },
                   all: ['app/scripts/{,*/}*.js']
-                }          
+                }
             });
 
             grunt.registerTask('default', '', function(target) {
 
-                return grunt.task.run([ 
+                return grunt.task.run([
                     'ngconstant:local',
                     'wiredep',
                     'concurrent:server',
@@ -311,8 +315,17 @@
                     'ngdocs',
                     'ngtemplates',
                     'concat:build',
+                    'status',
                     'watch'
                 ]);
+            });
+
+            grunt.registerTask('status', '', function() {
+                var options = { separator: ', ', color: 'yellow' };
+                grunt.log.subhead(grunt.log.wordlist(['Package ' + bower.name],{ separator: ', ', color: 'blue' }));
+                grunt.log.subhead(grunt.log.wordlist(['Web server running on http://localhost:' + parseInt(bower.port)],options));
+                grunt.log.subhead(grunt.log.wordlist(['Docs server running on http://localhost:' + (parseInt(bower.port) + 400)],options));
+
             });
     }
 

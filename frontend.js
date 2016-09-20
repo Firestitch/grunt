@@ -289,7 +289,7 @@
                             CONFIG: grunt.file.readJSON('config/staging.json'),
                             BUILD: {'build':'staging', 'build_number':grunt.option('build_number')}
                         }
-                    }                  
+                    }
                 },
 
                 svgmin: {
@@ -626,7 +626,7 @@
                         //'template'
                     ]);
                 }
-                
+
                 tasks.push('buildjson');
 
                 return grunt.task.run(tasks);
