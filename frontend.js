@@ -49,6 +49,10 @@
                             '.tmp/styles/{,*/}*.css',
                             '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
                         ]
+                    },
+                    status: {
+                        files: ['app/scripts/{,*/}*.js','app/styles/{,*/}*.*css'],
+                        tasks: ['status']
                     }
                 },
 
@@ -528,6 +532,7 @@
                         'autoprefixer',
                         'copy:iconfont',
                         'connect:local',
+                        'status',
                         'watch'
                     ]);
 
@@ -579,6 +584,12 @@
 
             grunt.registerTask('buildjson', 'Build JSON', function() {
                 grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '"}');
+            });
+
+            grunt.registerTask('status', '', function() {
+                var options = { separator: ', ', color: 'yellow' };
+                grunt.log.subhead(grunt.log.wordlist(['Web server running on http://localhost:' + parseInt(gruntConfig.port)],options));
+
             });
 
             grunt.registerTask('build', 'Compile', function(target, build_number) {
