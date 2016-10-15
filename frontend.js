@@ -265,7 +265,18 @@
                         space: '  ',
                         wrap: '\'use strict\';\n\n {%= __ngModule %}',
                         name: 'config',
-                        dest: '<%= yeoman.dist %>/config/config.js'
+                    },
+                    dist: {
+                        constants: function() {
+                            console.log(grunt.config('target'));
+                            return {
+                                CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
+                                BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number') }
+                            }
+                        },
+                        options: {
+                            dest: '<%= yeoman.dist %>/config/config.js'
+                        }
                     },
                     local: {
                         constants: {
@@ -274,24 +285,6 @@
                         },
                         options: {
                             dest: '<%= yeoman.app %>/config/config.js'
-                        }
-                    },
-                    development: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/development.json'),
-                            BUILD: {'build':'development', 'build_number':grunt.option('build_number')}
-                        }
-                    },
-                    production: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/production.json'),
-                            BUILD: {'build':'production', 'build_number':grunt.option('build_number')}
-                        }
-                    },
-                    staging: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/staging.json'),
-                            BUILD: {'build':'staging', 'build_number':grunt.option('build_number')}
                         }
                     }
                 },
@@ -348,47 +341,52 @@
                 // Copies remaining files to places other tasks can use
                 copy: {
                     dist: {
-                        files: [{
-                                expand: true,
-                                dot: true,
-                                cwd: '<%= yeoman.app %>',
-                                dest: '<%= yeoman.dist %>',
-                                src: [
-                                    '*.*',
-                                    '.htaccess',
-                                    '*.html',
-                                    'views/**/*.html',
-                                    'images/{,*/}*.{webp}',
-                                    'images/*',
-                                    'images/**/*',
-                                    'fonts/**/*',
-                                    'styles/fonts**/*'
-                                ]
-                            }, {
-                                expand: true,
-                                cwd: '.tmp/images',
-                                dest: '<%= yeoman.dist %>/images',
-                                src: ['generated/*']
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/bootstrap/dist',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/font-awesome',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/material-design-icons/iconfont',
-                                src: ['*.*'],
-                                dest: '<%= yeoman.dist %>/iconfont'
-                            }
-                        ]
+                        files: [
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: '<%= yeoman.app %>',
+                                    dest: '<%= yeoman.dist %>',
+                                    src: [
+                                        '*.*',
+                                        '.htaccess',
+                                        '*.html',
+                                        'views/**/*.html',
+                                        'images/{,*/}*.{webp}',
+                                        'images/*',
+                                        'images/**/*',
+                                        'fonts/**/*',
+                                        'styles/fonts**/*'
+                                    ]
+                                },
+                                {
+                                    expand: true,
+                                    cwd: '.tmp/images',
+                                    dest: '<%= yeoman.dist %>/images',
+                                    src: ['generated/*']
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/bootstrap/dist',
+                                    src: ['fonts/*.*'],
+                                    dest: '<%= yeoman.dist %>'
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/font-awesome',
+                                    src: ['fonts/*.*'],
+                                    dest: '<%= yeoman.dist %>'
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/material-design-icons/iconfont',
+                                    src: ['*.*'],
+                                    dest: '<%= yeoman.dist %>/iconfont'
+                                }
+                            ]
                     },
                     iconfont: {
                         files: [
@@ -400,60 +398,6 @@
                                 dest: '<%= yeoman.app %>/iconfont'
                             }
                         ]
-                    },
-                    development: {
-                        files: [{
-                                expand: true,
-                                dot: true,
-                                cwd: '.',
-                                dest: '<%= yeoman.dist %>',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/development/, "");
-                                },
-                                src: [
-                                    'telerik/development/*',
-                                    'telerik/development/plugins/**/*',
-                                    'telerik/development/App_Resources/**/*'
-                                ]
-                            }]
-                    },
-                    staging: {
-                        files: [{
-                                expand: true,
-                                dot: true,
-                                cwd: '.',
-                                dest: '<%= yeoman.dist %>',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/staging/, "");
-                                },
-                                src: [
-                                    'telerik/staging/*',
-                                    'telerik/staging/plugins/**/*',
-                                    'telerik/staging/App_Resources/**/*'
-                                ]
-                        }]
-                    },
-                    production: {
-                        files: [{
-                                expand: true,
-                                dot: true,
-                                cwd: '.',
-                                dest: '<%= yeoman.dist %>',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/production/, "");
-                                },
-                                src: [
-                                    'telerik/production/*',
-                                    'telerik/production/plugins/**/*',
-                                    'telerik/production/App_Resources/**/*'
-                                ]
-                        }]
-                    },
-                    styles: {
-                        expand: true,
-                        cwd: '<%= yeoman.app %>/styles',
-                        dest: '.tmp/styles/',
-                        src: '{,*/}*.css'
                     }
                 },
 
@@ -481,29 +425,25 @@
                         cwd: '<%= yeoman.dist %>',
                         command: 'appbuilder livesync cloud'
                     }
-                },
-
-                prompt: {
-                    builder: {
-                        options: {
-                            questions: [{
-                                config: 'builder',
-                                message: 'Please select...',
-                                name: 'option',
-                                type: 'list',
-                                choices: ['LiveSync Cloud']
-                            }],
-                            then: function(results) {
-                                if(results.builder == 'LiveSync Cloud')
-                                    grunt.task.run('exec:livesynccloud');
-                            }
-                        }
-                    }
                 }
             });
 
-            grunt.registerTask('builder', '', function(target) {
-                return grunt.task.run(['prompt:builder']);
+            grunt.registerTask('useminPrepareDev', function() {
+                grunt.config.set('useminPrepare', grunt.config('useminPrepareDev'));
+                grunt.task.run('useminPrepare');
+            });
+
+            grunt.registerTask('buildjson', 'Build JSON', function() {
+                grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '"}');
+            });
+
+            grunt.registerTask('status', '', function() {
+                var options = { separator: ', ', color: 'yellow' };
+                grunt.log.subhead(grunt.log.wordlist(['Web server running on http://localhost:' + parseInt(gruntConfig.port)],options));
+            });
+
+            grunt.registerTask('default', '', function(target) {
+                return grunt.task.run(['serve:local']);
             });
 
             grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
@@ -512,6 +452,8 @@
                     grunt.log.error('Please specify a target to serve. Options: serve:local, serve:staging, serve:production');
                     return false;
                 }
+
+                grunt.config('target', target);
 
                 if (grunt.option('jshint'))
                     grunt.config.merge({
@@ -539,7 +481,7 @@
                 } else {
 
                     var tasks = ['clean:dist',
-                        'ngconstant:' + target,
+                        'ngconstant:dist',
                         'wiredep'
                     ];
 
@@ -577,21 +519,6 @@
                 }
             });
 
-            grunt.registerTask('useminPrepareDev', function() {
-                grunt.config.set('useminPrepare', grunt.config('useminPrepareDev'));
-                grunt.task.run('useminPrepare');
-            });
-
-            grunt.registerTask('buildjson', 'Build JSON', function() {
-                grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '"}');
-            });
-
-            grunt.registerTask('status', '', function() {
-                var options = { separator: ', ', color: 'yellow' };
-                grunt.log.subhead(grunt.log.wordlist(['Web server running on http://localhost:' + parseInt(gruntConfig.port)],options));
-
-            });
-
             grunt.registerTask('build', 'Compile', function(target, build_number) {
 
                 if (arguments.length === 0) {
@@ -599,8 +526,11 @@
                     return false;
                 }
 
+                grunt.log.ok(['Building ' + target]);
+                grunt.config('target', target);
+
                 var tasks = [   'clean:dist',
-                                'ngconstant:' + target,
+                                'ngconstant:dist',
                                 'wiredep'
                             ];
 
@@ -612,12 +542,9 @@
                         'concat',
                         'ngAnnotate',
                         'copy:dist',
-                        'copy:' + target,
-                        //'cdnify',
                         'filerev',
                         'usemin',
-                        'clean:cleanup',
-                        //'template'
+                        'clean:cleanup'
                     ]);
                 } else {
                     tasks = grunt.util._.union(tasks, ['useminPrepare',
@@ -626,19 +553,36 @@
                         'concat',
                         'ngAnnotate',
                         'copy:dist',
-                        'copy:' + target,
-                        //'cdnify',
                         'uglify',
                         'cssmin',
                         'filerev',
                         'usemin',
                         'htmlmin',
-                        'clean:cleanup',
-                        //'template'
+                        'clean:cleanup'
                     ]);
                 }
 
+                grunt.config.set('copy.telerik', {
+                    files : [
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: '.',
+                                    dest: '<%= yeoman.dist %>',
+                                    rename: function(dest, src) {
+                                        return dest + src.replace(new RegExp('telerik\/' + target), '');
+                                    },
+                                    src: [
+                                        'telerik/' + target + '/*',
+                                        'telerik/' + target + '/plugins/**/*',
+                                        'telerik/' + target + '/App_Resources/**/*'
+                                    ]
+                                }
+                    ]
+                });
+
                 tasks.push('buildjson');
+                tasks.push('copy:telerik');
 
                 return grunt.task.run(tasks);
             });
