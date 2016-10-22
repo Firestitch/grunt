@@ -75,6 +75,22 @@
                         files: {
                             'dist/build.html': ['app/build.html']
                         }
+                    },
+
+                    'gen': {
+
+                        options: {
+                            data: function() {
+                                var data = { controller: grunt.config('genController') };
+
+                                return data;
+                            },
+                            delimiters: 'handlebars-like-delimiters'
+                        },
+                        files: {
+                            '.tmp/controller.js': ['grunt/gen/controller.js'],
+                            '.tmp/view.html': ['grunt/gen/view.html']
+                        }
                     }
                 },
 
@@ -268,7 +284,7 @@
                     },
                     dist: {
                         constants: function() {
-                            console.log(grunt.config('target'));
+
                             return {
                                 CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
                                 BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number') }
@@ -398,6 +414,38 @@
                                 dest: '<%= yeoman.app %>/iconfont'
                             }
                         ]
+                    },
+                    genController: {
+                        files: [
+                            {
+                                expand: true,
+                                flatten: true,
+                                cwd: '.',
+                                dest: 'app/scripts/controllers/',
+                                rename: function(dest, src) {
+                                    return dest + src.replace(new RegExp('controller'), grunt.config('genController').toLowerCase());
+                                },
+                                src: [
+                                    '.tmp/controller.js'
+                                ]
+                            }
+                        ]
+                    },
+                    genView: {
+                        files: [
+                            {
+                                expand: true,
+                                flatten: true,
+                                cwd: '.',
+                                dest: 'app/views/',
+                                rename: function(dest, src) {
+                                    return dest + src.replace(new RegExp('view'),grunt.config('genController').toLowerCase());
+                                },
+                                src: [
+                                    '.tmp/view.html'
+                                ]
+                            }
+                        ]
                     }
                 },
 
@@ -420,11 +468,46 @@
                     }
                 },
 
-                exec: {
-                    livesynccloud: {
-                        cwd: '<%= yeoman.dist %>',
-                        command: 'appbuilder livesync cloud'
-                    }
+                'string-replace': {
+                    genindex: {
+                        files: {
+                            'app/index.html': 'app/index.html'
+                        },
+                        options: {
+                            replacements: [{
+                                pattern: /<!-- genend -->/ig,
+                                replacement: function (match, p1) {
+                                    return '<script src="scripts/controllers/' + grunt.config('genController').toLowerCase() + '.js"></script>\n\t<!-- genend -->';
+                                }
+                            }]
+                        }
+                    },
+                    genapp: {
+                        files: {
+                            'app/scripts/app.js': 'app/scripts/app.js'
+                        },
+                        options: {
+                            replacements: [{
+                                pattern: /\/\*\* genend \*\*\//ig,
+                                replacement: function (match, p1) {
+                                    return  '.state(\'' + grunt.config('genController').toLowerCase() + '\', {\n' +
+                                            '		url: \'/' + grunt.config('genController').toLowerCase() + '/:param\',\n' +
+                                            '		templateUrl: \'views/' + grunt.config('genController').toLowerCase() + '.html\',\n' +
+                                            '		controller: \'' + grunt.config('genController') + 'Ctrl\',\n' +
+                                            '		params: {\n' +
+                                            '			param: { squash: true, value: null }\n' +
+                                            '		},\n' +
+                                            '		resolve: {\n' +
+                                            '			param: function($stateParams) {\n' +
+                                            '				return $stateParams.param;\n' +
+                                            '			}\n' +
+                                            '		}\n' +
+                                            '\t})\n\n\t/** genend **/';
+                                }
+                            }]
+                        }
+                    },
+
                 }
             });
 
@@ -585,6 +668,18 @@
                 tasks.push('copy:telerik');
 
                 return grunt.task.run(tasks);
+            });
+
+
+            grunt.registerTask('gen', 'Compile', function(controller, type) {
+
+                grunt.config('genController',controller);
+
+                return grunt.task.run(['template:gen',
+                                        'copy:genController',
+                                        'copy:genView',
+                                        'string-replace:genindex',
+                                        'string-replace:genapp']);
             });
     }
 
