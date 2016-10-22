@@ -77,19 +77,34 @@
                         }
                     },
 
-                    'gen': {
+                    'controller': {
 
                         options: {
                             data: function() {
-                                var data = { controller: grunt.config('genController') };
+                                var data = { controller: grunt.config('controller') };
 
                                 return data;
                             },
                             delimiters: 'handlebars-like-delimiters'
                         },
                         files: {
-                            '.tmp/controller.js': ['grunt/gen/controller.js'],
-                            '.tmp/view.html': ['grunt/gen/view.html']
+                            '.tmp/controller.js': ['grunt/templates/controller.js'],
+                            '.tmp/view.html': ['grunt/templates/view.html']
+                        }
+                    },
+
+                    'service': {
+
+                        options: {
+                            data: function() {
+                                var data = { service: grunt.config('service') };
+
+                                return data;
+                            },
+                            delimiters: 'handlebars-like-delimiters'
+                        },
+                        files: {
+                            '.tmp/service.js': ['grunt/templates/service.js']
                         }
                     }
                 },
@@ -415,7 +430,7 @@
                             }
                         ]
                     },
-                    genController: {
+                    controller: {
                         files: [
                             {
                                 expand: true,
@@ -423,7 +438,7 @@
                                 cwd: '.',
                                 dest: 'app/scripts/controllers/',
                                 rename: function(dest, src) {
-                                    return dest + src.replace(new RegExp('controller'), grunt.config('genController').toLowerCase());
+                                    return dest + src.replace(new RegExp('controller'), grunt.config('controller').toLowerCase());
                                 },
                                 src: [
                                     '.tmp/controller.js'
@@ -431,7 +446,7 @@
                             }
                         ]
                     },
-                    genView: {
+                    view: {
                         files: [
                             {
                                 expand: true,
@@ -439,14 +454,30 @@
                                 cwd: '.',
                                 dest: 'app/views/',
                                 rename: function(dest, src) {
-                                    return dest + src.replace(new RegExp('view'),grunt.config('genController').toLowerCase());
+                                    return dest + src.replace(new RegExp('view'),grunt.config('controller').toLowerCase());
                                 },
                                 src: [
                                     '.tmp/view.html'
                                 ]
                             }
                         ]
-                    }
+                    },
+                    service: {
+                        files: [
+                            {
+                                expand: true,
+                                flatten: true,
+                                cwd: '.',
+                                dest: 'app/scripts/services/',
+                                rename: function(dest, src) {
+                                    return dest + src.replace(new RegExp('service'), grunt.config('service').toLowerCase());
+                                },
+                                src: [
+                                    '.tmp/service.js'
+                                ]
+                            }
+                        ]
+                    },
                 },
 
                 // Run some tasks in parallel to speed up the build process
@@ -469,31 +500,44 @@
                 },
 
                 'string-replace': {
-                    genindex: {
+                    'index-controller': {
                         files: {
                             'app/index.html': 'app/index.html'
                         },
                         options: {
                             replacements: [{
-                                pattern: /<!-- genend -->/ig,
+                                pattern: /<!-- endcontrollers -->/ig,
                                 replacement: function (match, p1) {
-                                    return '<script src="scripts/controllers/' + grunt.config('genController').toLowerCase() + '.js"></script>\n\t<!-- genend -->';
+                                    return '<script src="scripts/controllers/' + grunt.config('controller').toLowerCase() + '.js"></script>\n\t<!-- endcontrollers -->';
                                 }
                             }]
                         }
                     },
-                    genapp: {
+                    'index-service': {
+                        files: {
+                            'app/index.html': 'app/index.html'
+                        },
+                        options: {
+                            replacements: [{
+                                pattern: /<!-- endservices -->/ig,
+                                replacement: function (match, p1) {
+                                    return '<script src="scripts/services/' + grunt.config('service').toLowerCase() + '.js"></script>\n\t<!-- endservices -->';
+                                }
+                            }]
+                        }
+                    },
+                    app: {
                         files: {
                             'app/scripts/app.js': 'app/scripts/app.js'
                         },
                         options: {
                             replacements: [{
-                                pattern: /\/\*\* genend \*\*\//ig,
+                                pattern: /\/\*\* endstates \*\*\//ig,
                                 replacement: function (match, p1) {
-                                    return  '.state(\'' + grunt.config('genController').toLowerCase() + '\', {\n' +
-                                            '		url: \'/' + grunt.config('genController').toLowerCase() + '/:param\',\n' +
-                                            '		templateUrl: \'views/' + grunt.config('genController').toLowerCase() + '.html\',\n' +
-                                            '		controller: \'' + grunt.config('genController') + 'Ctrl\',\n' +
+                                    return  '.state(\'' + grunt.config('controller').toLowerCase() + '\', {\n' +
+                                            '		url: \'/' + grunt.config('controller').toLowerCase() + '/:param\',\n' +
+                                            '		templateUrl: \'views/' + grunt.config('controller').toLowerCase() + '.html\',\n' +
+                                            '		controller: \'' + grunt.config('controller') + 'Ctrl\',\n' +
                                             '		params: {\n' +
                                             '			param: { squash: true, value: null }\n' +
                                             '		},\n' +
@@ -502,7 +546,7 @@
                                             '				return $stateParams.param;\n' +
                                             '			}\n' +
                                             '		}\n' +
-                                            '\t})\n\n\t/** genend **/';
+                                            '\t})\n\n\t/** endstates **/';
                                 }
                             }]
                         }
@@ -671,15 +715,24 @@
             });
 
 
-            grunt.registerTask('gen', 'Compile', function(controller, type) {
+            grunt.registerTask('controller', 'Controller Generator', function(controller) {
 
-                grunt.config('genController',controller);
+                grunt.config('controller',controller);
 
-                return grunt.task.run(['template:gen',
-                                        'copy:genController',
-                                        'copy:genView',
-                                        'string-replace:genindex',
-                                        'string-replace:genapp']);
+                return grunt.task.run(['template:controller',
+                                        'copy:controller',
+                                        'copy:view',
+                                        'string-replace:index-controller',
+                                        'string-replace:app']);
+            });
+
+            grunt.registerTask('service', 'Service Generator', function(service) {
+
+                grunt.config('service',service);
+
+                return grunt.task.run(['template:service',
+                                        'copy:service',
+                                        'string-replace:index-service']);
             });
     }
 
