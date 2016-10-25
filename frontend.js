@@ -613,7 +613,7 @@
                     ];
 
                     //If --nomin is detected then do not minify the js and css
-                    if (grunt.option('nomin') || target=='development') {
+                    if ((grunt.option('nomin') || target=='development') && !grunt.option('min')) {
                         tasks = grunt.util._.union(tasks, ['useminPrepareDev',
                             'concurrent:dist',
                             'autoprefixer',
