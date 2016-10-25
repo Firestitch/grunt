@@ -139,7 +139,14 @@
                         options: {
                             port: gruntConfig.port + 20000,
                             hostname: 'localhost',
-                            base: '<%= yeoman.dist %>'
+                            base: '<%= yeoman.dist %>',
+                            middleware: function(connect, options) {
+                                return [modRewrite(['^[^\\.]*$ /index.html [L]']),
+                                    connect.static('.tmp'),
+                                    connect.static('app'),
+                                    connect().use('/bower_components', connect.static('./bower_components'))
+                                ];
+                            }
                         }
                     }
                 },
