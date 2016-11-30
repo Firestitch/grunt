@@ -18,12 +18,6 @@
         // Define the configuration for all the tasks
         grunt.initConfig({
 
-                // Project settings
-                yeoman: {
-                            app: 'app',
-                            dist: 'dist'
-                        },
-
                 // Watches files for changes and runs tasks based on the changed files
                 watch: {
                     bower: {
@@ -35,7 +29,7 @@
                         tasks: ['newer:jshint:test', 'karma']
                     },
                     compass: {
-                        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+                        files: ['app/styles/{,*/}*.{scss,sass}'],
                         tasks: ['compass:server', 'autoprefixer']
                     },
                     gruntfile: {
@@ -47,7 +41,7 @@
                         },
                         files: [
                             '.tmp/styles/{,*/}*.css',
-                            '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                            'app/images/{,*/}*.{png,jpg,jpeg,gif,webp}'
                         ]
                     },
                     status: {
@@ -123,7 +117,7 @@
                             open: true,
                             base: [
                                 '.tmp',
-                                '<%= yeoman.app %>'
+                                'app'
                             ],
                             middleware: function(connect, options) {
 
@@ -139,12 +133,15 @@
                         options: {
                             port: gruntConfig.port + 20000,
                             hostname: 'localhost',
-                            base: '<%= yeoman.dist %>',
+                            base: 'dist',
                             middleware: function(connect, options) {
-                                return [modRewrite(['^[^\\.]*$ /index.html [L]']),
-                                    connect.static('.tmp'),
-                                    connect.static('app'),
-                                    connect().use('/bower_components', connect.static('./bower_components'))
+                                return [ modRewrite(['^[^\\.]*$ /index.html [L]']),
+						                connect.static('.tmp'),
+						                connect().use(
+						                    '/bower_components',
+						                    connect.static('./bower_components')
+						                ),
+						                connect.static('dist')
                                 ];
                             }
                         }
@@ -160,7 +157,7 @@
                     all: {
                         src: [
                             'Gruntfile.js',
-                            '<%= yeoman.app %>/scripts/{,*/}*.js'
+                            'app/scripts/{,*/}*.js'
                         ]
                     },
                     test: {
@@ -181,13 +178,13 @@
                             dot: true,
                             src: [
                                 '.tmp',
-                                '<%= yeoman.dist %>/{,*/}*',
-                                '!<%= yeoman.dist %>/.git*'
+                                'dist/{,*/}*',
+                                '!dist/.git*'
                             ]
                         }]
                     },
                     server: '.tmp',
-                    cleanup: '<%= yeoman.dist %>/config'
+                    cleanup: 'dist/config'
                 },
 
                 // Add vendor prefixed styles
@@ -208,11 +205,11 @@
                 // Automatically inject Bower components into the app
                 wiredep: {
                     app: {
-                        src: ['<%= yeoman.app %>/index.html'],
+                        src: ['app/index.html'],
                         ignorePath: /\.\.\//
                     },
                     sass: {
-                        src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+                        src: ['app/styles/{,*/}*.{scss,sass}'],
                         ignorePath: /(\.\.\/){1,2}bower_components\//
                     }
                 },
@@ -220,12 +217,12 @@
                 // Compiles Sass to CSS and generates necessary files if requested
                 compass: {
                     options: {
-                        sassDir: '<%= yeoman.app %>/styles',
+                        sassDir: 'app/styles',
                         cssDir: '.tmp/styles',
                         generatedImagesDir: '.tmp/images/generated',
-                        imagesDir: '<%= yeoman.app %>/images',
-                        javascriptsDir: '<%= yeoman.app %>/scripts',
-                        fontsDir: '<%= yeoman.app %>/fonts',
+                        imagesDir: 'app/images',
+                        javascriptsDir: 'app/scripts',
+                        fontsDir: 'app/fonts',
                         importPath: './bower_components',
                         httpImagesPath: '/images',
                         httpGeneratedImagesPath: '/images/generated',
@@ -236,7 +233,7 @@
                     },
                     dist: {
                         options: {
-                            generatedImagesDir: '<%= yeoman.dist %>/images/generated'
+                            generatedImagesDir: 'dist/images/generated'
                         }
                     },
                     server: {
@@ -250,8 +247,8 @@
                 filerev: {
                     dist: {
                         src: [
-                            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                            '<%= yeoman.dist %>/styles/{,*/}*.css'
+                            'dist/scripts/{,*/}*.js',
+                            'dist/styles/{,*/}*.css'
                         ]
                     }
                 },
@@ -260,9 +257,9 @@
                 // concat, minify and revision files. Creates configurations in memory so
                 // additional tasks can operate on them
                 useminPrepare: {
-                    html: '<%= yeoman.app %>/index.html',
+                    html: 'app/index.html',
                     options: {
-                        dest: '<%= yeoman.dist %>',
+                        dest: 'dist',
                         flow: {
                             html: {
                                 steps: {
@@ -275,10 +272,10 @@
                     }
                 },
 
-                useminPrepareDev: {
-                    html: '<%= yeoman.app %>/index.html',
+                useminPrepareNomin: {
+                    html: 'app/index.html',
                     options: {
-                        dest: '<%= yeoman.dist %>',
+                        dest: 'dist',
                         flow: {
                             steps: {
                                 'js': ['concat'],
@@ -291,10 +288,10 @@
 
                 // Performs rewrites based on filerev and the useminPrepare configuration
                 usemin: {
-                    html: ['<%= yeoman.dist %>/{,*/}*.html'],
-                    css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+                    html: ['dist/{,*/}*.html'],
+                    css: ['dist/styles/{,*/}*.css'],
                     options: {
-                        assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
+                        assetsDirs: ['dist', 'dist/images']
                     }
                 },
 
@@ -313,7 +310,7 @@
                             }
                         },
                         options: {
-                            dest: '<%= yeoman.dist %>/config/config.js'
+                            dest: 'dist/config/config.js'
                         }
                     },
                     local: {
@@ -322,19 +319,8 @@
                             BUILD: {'build':'local', 'build_number':grunt.option('build_number')}
                         },
                         options: {
-                            dest: '<%= yeoman.app %>/config/config.js'
+                            dest: 'app/config/config.js'
                         }
-                    }
-                },
-
-                svgmin: {
-                    dist: {
-                        files: [{
-                            expand: true,
-                            cwd: '<%= yeoman.app %>/images',
-                            src: '**/*.svg',
-                            dest: '<%= yeoman.dist %>/images'
-                        }]
                     }
                 },
 
@@ -349,9 +335,9 @@
                         },
                         files: [{
                             expand: true,
-                            cwd: '<%= yeoman.dist %>',
+                            cwd: 'dist',
                             src: ['*.html', 'views/**/*.html'],
-                            dest: '<%= yeoman.dist %>'
+                            dest: 'dist'
                         }]
                     }
                 },
@@ -372,7 +358,7 @@
                 // Replace Google CDN references
                 cdnify: {
                     dist: {
-                        html: ['<%= yeoman.dist %>/*.html']
+                        html: ['dist/*.html']
                     }
                 },
 
@@ -383,8 +369,8 @@
                                 {
                                     expand: true,
                                     dot: true,
-                                    cwd: '<%= yeoman.app %>',
-                                    dest: '<%= yeoman.dist %>',
+                                    cwd: 'app',
+                                    dest: 'dist',
                                     src: [
                                         '*.*',
                                         '.htaccess',
@@ -400,7 +386,7 @@
                                 {
                                     expand: true,
                                     cwd: '.tmp/images',
-                                    dest: '<%= yeoman.dist %>/images',
+                                    dest: 'dist/images',
                                     src: ['generated/*']
                                 },
                                 {
@@ -408,21 +394,21 @@
                                     dot: true,
                                     cwd: 'bower_components/bootstrap/dist',
                                     src: ['fonts/*.*'],
-                                    dest: '<%= yeoman.dist %>'
+                                    dest: 'dist'
                                 },
                                 {
                                     expand: true,
                                     dot: true,
                                     cwd: 'bower_components/font-awesome',
                                     src: ['fonts/*.*'],
-                                    dest: '<%= yeoman.dist %>'
+                                    dest: 'dist'
                                 },
                                 {
                                     expand: true,
                                     dot: true,
                                     cwd: 'bower_components/material-design-icons/iconfont',
                                     src: ['*.*'],
-                                    dest: '<%= yeoman.dist %>/iconfont'
+                                    dest: 'dist/iconfont'
                                 }
                             ]
                     },
@@ -433,7 +419,7 @@
                                 dot: true,
                                 cwd: 'bower_components/material-design-icons/iconfont',
                                 src: ['*.*'],
-                                dest: '<%= yeoman.app %>/iconfont'
+                                dest: 'app/iconfont'
                             }
                         ]
                     },
@@ -493,8 +479,7 @@
                         'compass:server'
                     ],
                     dist: [
-                        'compass:dist',
-                        'svgmin'
+                        'compass:dist'
                     ]
                 },
 
@@ -562,8 +547,8 @@
                 }
             });
 
-            grunt.registerTask('useminPrepareDev', function() {
-                grunt.config.set('useminPrepare', grunt.config('useminPrepareDev'));
+            grunt.registerTask('useminPrepareNomin', function() {
+                grunt.config.set('useminPrepare', grunt.config('useminPrepareNomin'));
                 grunt.task.run('useminPrepare');
             });
 
@@ -583,74 +568,77 @@
             grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
 
                 if (arguments.length === 0) {
-                    grunt.log.error('Please specify a target to serve. Options: serve:local, serve:staging, serve:production');
+                    grunt.log.error('Please specify a target to serve');
                     return false;
                 }
 
-                grunt.config('target', target);
+ 				grunt.config('target', target);
+                var compile = target !== 'local' || grunt.option('compile');
+                var minify 	= !((grunt.option('nomin') || target=='development' || target=='local') && !grunt.option('min'));
 
                 if (grunt.option('jshint'))
                     grunt.config.merge({
                         watch: {
                             js: {
-                                files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+                                files: ['app/scripts/{,*/}*.js'],
                                 tasks: ['newer:jshint:all']
                             }
                         }
                     });
 
-                if (target === 'local') {
-                    return grunt.task.run([
-                        'clean:server',
-                        'ngconstant:local',
-                        'wiredep',
-                        'concurrent:server',
-                        'autoprefixer',
-                        'copy:iconfont',
-                        'connect:local',
-                        'status',
-                        'watch'
-                    ]);
+                if (compile) {
 
-                } else {
+                	grunt.log.ok(['Serving ' + target]);
 
-                    var tasks = ['clean:dist',
-                        'ngconstant:dist',
-                        'wiredep'
-                    ];
+                    if (minify) {
 
-                    //If --nomin is detected then do not minify the js and css
-                    if ((grunt.option('nomin') || target=='development') && !grunt.option('min')) {
-                        tasks = grunt.util._.union(tasks, ['useminPrepareDev',
-                            'concurrent:dist',
-                            'autoprefixer',
-                            'concat',
-                            'ngAnnotate',
-                            'copy:dist',
-                            //'cdnify',
-                            'filerev',
-                            'usemin',
-                            'connect:dist:keepalive'
-                        ]);
+                        var tasks = ['clean:dist',
+			                        'ngconstant:dist',
+			                        'wiredep',
+			                        'useminPrepare',
+		                            'concurrent:dist',
+		                            'autoprefixer',
+		                            'concat',
+		                            'ngAnnotate',
+		                            'copy:dist',
+		                            'filerev',
+		                            'uglify',
+		                            'cssmin',
+		                            'usemin',
+		                            'htmlmin',
+		                            'connect:dist:keepalive'
+                        ];
                     } else {
-                        tasks = grunt.util._.union(tasks, ['useminPrepare',
-                            'concurrent:dist',
-                            'autoprefixer',
-                            'concat',
-                            'ngAnnotate',
-                            'copy:dist',
-                            //'cdnify',
-                            'filerev',
-                            'uglify',
-                            'cssmin',
-                            'usemin',
-                            'htmlmin',
-                            'connect:dist:keepalive'
-                        ]);
-                    }
 
-                    return grunt.task.run(tasks);
+                        //If --nomin is detected then do not minify the js and css
+                        var tasks = ['clean:dist',
+			                        'ngconstant:dist',
+			                        'wiredep',
+		                        	'useminPrepareNomin',
+		                            'concurrent:dist',
+		                            'autoprefixer',
+		                            'concat',
+		                            'ngAnnotate',
+		                            'copy:dist',
+		                            'filerev',
+		                            'usemin',
+		                            'connect:dist:keepalive'
+		                        ];
+                    }
+                } else {
+                   	var tasks = ['clean:server',
+		                        'ngconstant:local',
+		                        'wiredep',
+		                        'concurrent:server',
+		                        'autoprefixer',
+		                        'copy:iconfont',
+		                        'connect:local',
+		                        'status',
+		                        'watch'
+		                    ];
                 }
+
+                return grunt.task.run(tasks);
             });
 
             grunt.registerTask('build', 'Compile', function(target, build_number) {
@@ -670,7 +658,7 @@
 
                 //If --nomin is detected then do not minify the js and css
                 if (grunt.option('nomin') || target=='development') {
-                    tasks = grunt.util._.union(tasks, ['useminPrepareDev',
+                    tasks = grunt.util._.union(tasks, ['useminPrepareNomin',
                         'concurrent:dist',
                         'autoprefixer',
                         'concat',
@@ -702,7 +690,7 @@
                                     expand: true,
                                     dot: true,
                                     cwd: '.',
-                                    dest: '<%= yeoman.dist %>',
+                                    dest: 'dist',
                                     rename: function(dest, src) {
                                         return dest + src.replace(new RegExp('telerik\/' + target), '');
                                     },
