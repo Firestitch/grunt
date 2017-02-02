@@ -303,7 +303,6 @@
                     },
                     dist: {
                         constants: function() {
-
                             return {
                                 CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
                                 BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number') }
@@ -314,9 +313,11 @@
                         }
                     },
                     local: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/local.json'),
-                            BUILD: {'build':'local', 'build_number':grunt.option('build_number')}
+                        constants: function() {
+                            return {
+                            	CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
+                            	BUILD: { 'build': grunt.config('target'), 'build_number':grunt.option('build_number') }
+                            }
                         },
                         options: {
                             dest: 'app/config/config.js'
@@ -567,13 +568,14 @@
 
             grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
 
-                if (arguments.length === 0) {
-                    grunt.log.error('Please specify a target to serve');
-                    return false;
+                if(!target) {
+                	target = 'local';
                 }
 
+                grunt.log.ok(['Serving ' + target]);
  				grunt.config('target', target);
-                var compile = target !== 'local' || grunt.option('compile');
+
+                var compile = target !== 'local' && !grunt.option('nocompile');
                 var minify 	= !((grunt.option('nomin') || target=='development' || target=='local') && !grunt.option('min'));
 
                 if (grunt.option('jshint'))
