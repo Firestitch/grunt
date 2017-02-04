@@ -65,9 +65,10 @@
                     app: {
                         options: {
                             module: bower.name,
+                            htmlmin:  { collapseWhitespace: true, collapseBooleanAttributes: true }
                         },
                         cwd:  'app',
-                        src:  'views/directives/' + bower.namespace + '.html',
+                        src:  'views/directives/*.html',
                         dest: '.tmp/directivetemplate.js'
                     }
                 },
