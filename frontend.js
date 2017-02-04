@@ -18,12 +18,6 @@
         // Define the configuration for all the tasks
         grunt.initConfig({
 
-                // Project settings
-                yeoman: {
-                            app: 'app',
-                            dist: 'dist'
-                        },
-
                 // Watches files for changes and runs tasks based on the changed files
                 watch: {
                     bower: {
@@ -35,7 +29,7 @@
                         tasks: ['newer:jshint:test', 'karma']
                     },
                     compass: {
-                        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+                        files: ['app/styles/{,*/}*.{scss,sass}'],
                         tasks: ['compass:server', 'autoprefixer']
                     },
                     gruntfile: {
@@ -47,7 +41,7 @@
                         },
                         files: [
                             '.tmp/styles/{,*/}*.css',
-                            '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+                            'app/images/{,*/}*.{png,jpg,jpeg,gif,webp}'
                         ]
                     },
                     status: {
@@ -75,6 +69,37 @@
                         files: {
                             'dist/build.html': ['app/build.html']
                         }
+                    },
+
+                    'controller': {
+
+                        options: {
+                            data: function() {
+                                var data = { controller: grunt.config('controller') };
+
+                                return data;
+                            },
+                            delimiters: 'handlebars-like-delimiters'
+                        },
+                        files: {
+                            '.tmp/controller.js': ['grunt/templates/controller.js'],
+                            '.tmp/view.html': ['grunt/templates/view.html']
+                        }
+                    },
+
+                    'service': {
+
+                        options: {
+                            data: function() {
+                                var data = { service: grunt.config('service') };
+
+                                return data;
+                            },
+                            delimiters: 'handlebars-like-delimiters'
+                        },
+                        files: {
+                            '.tmp/service.js': ['grunt/templates/service.js']
+                        }
                     }
                 },
 
@@ -92,7 +117,7 @@
                             open: true,
                             base: [
                                 '.tmp',
-                                '<%= yeoman.app %>'
+                                'app'
                             ],
                             middleware: function(connect, options) {
 
@@ -108,7 +133,17 @@
                         options: {
                             port: gruntConfig.port + 20000,
                             hostname: 'localhost',
-                            base: '<%= yeoman.dist %>'
+                            base: 'dist',
+                            middleware: function(connect, options) {
+                                return [ modRewrite(['^[^\\.]*$ /index.html [L]']),
+						                connect.static('.tmp'),
+						                connect().use(
+						                    '/bower_components',
+						                    connect.static('./bower_components')
+						                ),
+						                connect.static('dist')
+                                ];
+                            }
                         }
                     }
                 },
@@ -122,7 +157,7 @@
                     all: {
                         src: [
                             'Gruntfile.js',
-                            '<%= yeoman.app %>/scripts/{,*/}*.js'
+                            'app/scripts/{,*/}*.js'
                         ]
                     },
                     test: {
@@ -143,13 +178,13 @@
                             dot: true,
                             src: [
                                 '.tmp',
-                                '<%= yeoman.dist %>/{,*/}*',
-                                '!<%= yeoman.dist %>/.git*'
+                                'dist/{,*/}*',
+                                '!dist/.git*'
                             ]
                         }]
                     },
                     server: '.tmp',
-                    cleanup: '<%= yeoman.dist %>/config'
+                    cleanup: 'dist/config'
                 },
 
                 // Add vendor prefixed styles
@@ -170,11 +205,11 @@
                 // Automatically inject Bower components into the app
                 wiredep: {
                     app: {
-                        src: ['<%= yeoman.app %>/index.html'],
+                        src: ['app/index.html'],
                         ignorePath: /\.\.\//
                     },
                     sass: {
-                        src: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
+                        src: ['app/styles/{,*/}*.{scss,sass}'],
                         ignorePath: /(\.\.\/){1,2}bower_components\//
                     }
                 },
@@ -182,12 +217,12 @@
                 // Compiles Sass to CSS and generates necessary files if requested
                 compass: {
                     options: {
-                        sassDir: '<%= yeoman.app %>/styles',
+                        sassDir: 'app/styles',
                         cssDir: '.tmp/styles',
                         generatedImagesDir: '.tmp/images/generated',
-                        imagesDir: '<%= yeoman.app %>/images',
-                        javascriptsDir: '<%= yeoman.app %>/scripts',
-                        fontsDir: '<%= yeoman.app %>/fonts',
+                        imagesDir: 'app/images',
+                        javascriptsDir: 'app/scripts',
+                        fontsDir: 'app/fonts',
                         importPath: './bower_components',
                         httpImagesPath: '/images',
                         httpGeneratedImagesPath: '/images/generated',
@@ -198,7 +233,7 @@
                     },
                     dist: {
                         options: {
-                            generatedImagesDir: '<%= yeoman.dist %>/images/generated'
+                            generatedImagesDir: 'dist/images/generated'
                         }
                     },
                     server: {
@@ -212,8 +247,8 @@
                 filerev: {
                     dist: {
                         src: [
-                            '<%= yeoman.dist %>/scripts/{,*/}*.js',
-                            '<%= yeoman.dist %>/styles/{,*/}*.css'
+                            'dist/scripts/{,*/}*.js',
+                            'dist/styles/{,*/}*.css'
                         ]
                     }
                 },
@@ -222,9 +257,9 @@
                 // concat, minify and revision files. Creates configurations in memory so
                 // additional tasks can operate on them
                 useminPrepare: {
-                    html: '<%= yeoman.app %>/index.html',
+                    html: 'app/index.html',
                     options: {
-                        dest: '<%= yeoman.dist %>',
+                        dest: 'dist',
                         flow: {
                             html: {
                                 steps: {
@@ -237,10 +272,10 @@
                     }
                 },
 
-                useminPrepareDev: {
-                    html: '<%= yeoman.app %>/index.html',
+                useminPrepareNomin: {
+                    html: 'app/index.html',
                     options: {
-                        dest: '<%= yeoman.dist %>',
+                        dest: 'dist',
                         flow: {
                             steps: {
                                 'js': ['concat'],
@@ -253,10 +288,10 @@
 
                 // Performs rewrites based on filerev and the useminPrepare configuration
                 usemin: {
-                    html: ['<%= yeoman.dist %>/{,*/}*.html'],
-                    css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
+                    html: ['dist/{,*/}*.html'],
+                    css: ['dist/styles/{,*/}*.css'],
                     options: {
-                        assetsDirs: ['<%= yeoman.dist %>', '<%= yeoman.dist %>/images']
+                        assetsDirs: ['dist', 'dist/images']
                     }
                 },
 
@@ -265,45 +300,28 @@
                         space: '  ',
                         wrap: '\'use strict\';\n\n {%= __ngModule %}',
                         name: 'config',
-                        dest: '<%= yeoman.dist %>/config/config.js'
                     },
-                    local: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/local.json'),
-                            BUILD: {'build':'local', 'build_number':grunt.option('build_number')}
+                    dist: {
+                        constants: function() {
+                            return {
+                                CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
+                                BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number') }
+                            }
                         },
                         options: {
-                            dest: '<%= yeoman.app %>/config/config.js'
+                            dest: 'dist/config/config.js'
                         }
                     },
-                    development: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/development.json'),
-                            BUILD: {'build':'development', 'build_number':grunt.option('build_number')}
+                    local: {
+                        constants: function() {
+                            return {
+                            	CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
+                            	BUILD: { 'build': grunt.config('target'), 'build_number':grunt.option('build_number') }
+                            }
+                        },
+                        options: {
+                            dest: 'app/config/config.js'
                         }
-                    },
-                    production: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/production.json'),
-                            BUILD: {'build':'production', 'build_number':grunt.option('build_number')}
-                        }
-                    },
-                    staging: {
-                        constants: {
-                            CONFIG: grunt.file.readJSON('config/staging.json'),
-                            BUILD: {'build':'staging', 'build_number':grunt.option('build_number')}
-                        }
-                    }
-                },
-
-                svgmin: {
-                    dist: {
-                        files: [{
-                            expand: true,
-                            cwd: '<%= yeoman.app %>/images',
-                            src: '**/*.svg',
-                            dest: '<%= yeoman.dist %>/images'
-                        }]
                     }
                 },
 
@@ -318,9 +336,9 @@
                         },
                         files: [{
                             expand: true,
-                            cwd: '<%= yeoman.dist %>',
+                            cwd: 'dist',
                             src: ['*.html', 'views/**/*.html'],
-                            dest: '<%= yeoman.dist %>'
+                            dest: 'dist'
                         }]
                     }
                 },
@@ -341,54 +359,59 @@
                 // Replace Google CDN references
                 cdnify: {
                     dist: {
-                        html: ['<%= yeoman.dist %>/*.html']
+                        html: ['dist/*.html']
                     }
                 },
 
                 // Copies remaining files to places other tasks can use
                 copy: {
                     dist: {
-                        files: [{
-                                expand: true,
-                                dot: true,
-                                cwd: '<%= yeoman.app %>',
-                                dest: '<%= yeoman.dist %>',
-                                src: [
-                                    '*.*',
-                                    '.htaccess',
-                                    '*.html',
-                                    'views/**/*.html',
-                                    'images/{,*/}*.{webp}',
-                                    'images/*',
-                                    'images/**/*',
-                                    'fonts/**/*',
-                                    'styles/fonts**/*'
-                                ]
-                            }, {
-                                expand: true,
-                                cwd: '.tmp/images',
-                                dest: '<%= yeoman.dist %>/images',
-                                src: ['generated/*']
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/bootstrap/dist',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/font-awesome',
-                                src: ['fonts/*.*'],
-                                dest: '<%= yeoman.dist %>'
-                            }, {
-                                expand: true,
-                                dot: true,
-                                cwd: 'bower_components/material-design-icons/iconfont',
-                                src: ['*.*'],
-                                dest: '<%= yeoman.dist %>/iconfont'
-                            }
-                        ]
+                        files: [
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'app',
+                                    dest: 'dist',
+                                    src: [
+                                        '*.*',
+                                        '.htaccess',
+                                        '*.html',
+                                        'views/**/*.html',
+                                        'images/{,*/}*.{webp}',
+                                        'images/*',
+                                        'images/**/*',
+                                        'fonts/**/*',
+                                        'styles/fonts**/*'
+                                    ]
+                                },
+                                {
+                                    expand: true,
+                                    cwd: '.tmp/images',
+                                    dest: 'dist/images',
+                                    src: ['generated/*']
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/bootstrap/dist',
+                                    src: ['fonts/*.*'],
+                                    dest: 'dist'
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/font-awesome',
+                                    src: ['fonts/*.*'],
+                                    dest: 'dist'
+                                },
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: 'bower_components/material-design-icons/iconfont',
+                                    src: ['*.*'],
+                                    dest: 'dist/iconfont'
+                                }
+                            ]
                     },
                     iconfont: {
                         files: [
@@ -397,64 +420,58 @@
                                 dot: true,
                                 cwd: 'bower_components/material-design-icons/iconfont',
                                 src: ['*.*'],
-                                dest: '<%= yeoman.app %>/iconfont'
+                                dest: 'app/iconfont'
                             }
                         ]
                     },
-                    development: {
-                        files: [{
+                    controller: {
+                        files: [
+                            {
                                 expand: true,
-                                dot: true,
+                                flatten: true,
                                 cwd: '.',
-                                dest: '<%= yeoman.dist %>',
+                                dest: 'app/scripts/controllers/',
                                 rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/development/, "");
+                                    return dest + src.replace(new RegExp('controller'), grunt.config('controller').toLowerCase());
                                 },
                                 src: [
-                                    'telerik/development/*',
-                                    'telerik/development/plugins/**/*',
-                                    'telerik/development/App_Resources/**/*'
+                                    '.tmp/controller.js'
                                 ]
-                            }]
+                            }
+                        ]
                     },
-                    staging: {
-                        files: [{
+                    view: {
+                        files: [
+                            {
                                 expand: true,
-                                dot: true,
+                                flatten: true,
                                 cwd: '.',
-                                dest: '<%= yeoman.dist %>',
+                                dest: 'app/views/',
                                 rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/staging/, "");
+                                    return dest + src.replace(new RegExp('view'),grunt.config('controller').toLowerCase());
                                 },
                                 src: [
-                                    'telerik/staging/*',
-                                    'telerik/staging/plugins/**/*',
-                                    'telerik/staging/App_Resources/**/*'
+                                    '.tmp/view.html'
                                 ]
-                        }]
+                            }
+                        ]
                     },
-                    production: {
-                        files: [{
+                    service: {
+                        files: [
+                            {
                                 expand: true,
-                                dot: true,
+                                flatten: true,
                                 cwd: '.',
-                                dest: '<%= yeoman.dist %>',
+                                dest: 'app/scripts/services/',
                                 rename: function(dest, src) {
-                                    return dest + src.replace(/telerik\/production/, "");
+                                    return dest + src.replace(new RegExp('service'), grunt.config('service').toLowerCase());
                                 },
                                 src: [
-                                    'telerik/production/*',
-                                    'telerik/production/plugins/**/*',
-                                    'telerik/production/App_Resources/**/*'
+                                    '.tmp/service.js'
                                 ]
-                        }]
+                            }
+                        ]
                     },
-                    styles: {
-                        expand: true,
-                        cwd: '<%= yeoman.app %>/styles',
-                        dest: '.tmp/styles/',
-                        src: '{,*/}*.css'
-                    }
                 },
 
                 // Run some tasks in parallel to speed up the build process
@@ -463,8 +480,7 @@
                         'compass:server'
                     ],
                     dist: [
-                        'compass:dist',
-                        'svgmin'
+                        'compass:dist'
                     ]
                 },
 
@@ -476,109 +492,64 @@
                     }
                 },
 
-                exec: {
-                    livesynccloud: {
-                        cwd: '<%= yeoman.dist %>',
-                        command: 'appbuilder livesync cloud'
-                    }
-                },
-
-                prompt: {
-                    builder: {
+                'string-replace': {
+                    'index-controller': {
+                        files: {
+                            'app/index.html': 'app/index.html'
+                        },
                         options: {
-                            questions: [{
-                                config: 'builder',
-                                message: 'Please select...',
-                                name: 'option',
-                                type: 'list',
-                                choices: ['LiveSync Cloud']
-                            }],
-                            then: function(results) {
-                                if(results.builder == 'LiveSync Cloud')
-                                    grunt.task.run('exec:livesynccloud');
-                            }
+                            replacements: [{
+                                pattern: /<!-- endcontrollers -->/ig,
+                                replacement: function (match, p1) {
+                                    return '<script src="scripts/controllers/' + grunt.config('controller').toLowerCase() + '.js"></script>\n\t<!-- endcontrollers -->';
+                                }
+                            }]
                         }
-                    }
-                }
-            });
-
-            grunt.registerTask('builder', '', function(target) {
-                return grunt.task.run(['prompt:builder']);
-            });
-
-            grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
-
-                if (arguments.length === 0) {
-                    grunt.log.error('Please specify a target to serve. Options: serve:local, serve:staging, serve:production');
-                    return false;
-                }
-
-                if (grunt.option('jshint'))
-                    grunt.config.merge({
-                        watch: {
-                            js: {
-                                files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-                                tasks: ['newer:jshint:all']
-                            }
+                    },
+                    'index-service': {
+                        files: {
+                            'app/index.html': 'app/index.html'
+                        },
+                        options: {
+                            replacements: [{
+                                pattern: /<!-- endservices -->/ig,
+                                replacement: function (match, p1) {
+                                    return '<script src="scripts/services/' + grunt.config('service').toLowerCase() + '.js"></script>\n\t<!-- endservices -->';
+                                }
+                            }]
                         }
-                    });
+                    },
+                    app: {
+                        files: {
+                            'app/scripts/app.js': 'app/scripts/app.js'
+                        },
+                        options: {
+                            replacements: [{
+                                pattern: /\/\*\* endstates \*\*\//ig,
+                                replacement: function (match, p1) {
+                                    return  '.state(\'' + grunt.config('controller').toLowerCase() + '\', {\n' +
+                                            '		url: \'/' + grunt.config('controller').toLowerCase() + '/:param\',\n' +
+                                            '		templateUrl: \'views/' + grunt.config('controller').toLowerCase() + '.html\',\n' +
+                                            '		controller: \'' + grunt.config('controller') + 'Ctrl\',\n' +
+                                            '		params: {\n' +
+                                            '			param: { squash: true, value: null }\n' +
+                                            '		},\n' +
+                                            '		resolve: {\n' +
+                                            '			param: function($stateParams) {\n' +
+                                            '				return $stateParams.param;\n' +
+                                            '			}\n' +
+                                            '		}\n' +
+                                            '\t})\n\n\t/** endstates **/';
+                                }
+                            }]
+                        }
+                    },
 
-                if (target === 'local') {
-                    return grunt.task.run([
-                        'clean:server',
-                        'ngconstant:local',
-                        'wiredep',
-                        'concurrent:server',
-                        'autoprefixer',
-                        'copy:iconfont',
-                        'connect:local',
-                        'status',
-                        'watch'
-                    ]);
-
-                } else {
-
-                    var tasks = ['clean:dist',
-                        'ngconstant:' + target,
-                        'wiredep'
-                    ];
-
-                    //If --nomin is detected then do not minify the js and css
-                    if (grunt.option('nomin') || target=='development') {
-                        tasks = grunt.util._.union(tasks, ['useminPrepareDev',
-                            'concurrent:dist',
-                            'autoprefixer',
-                            'concat',
-                            'ngAnnotate',
-                            'copy:dist',
-                            //'cdnify',
-                            'filerev',
-                            'usemin',
-                            'connect:dist:keepalive'
-                        ]);
-                    } else {
-                        tasks = grunt.util._.union(tasks, ['useminPrepare',
-                            'concurrent:dist',
-                            'autoprefixer',
-                            'concat',
-                            'ngAnnotate',
-                            'copy:dist',
-                            //'cdnify',
-                            'filerev',
-                            'uglify',
-                            'cssmin',
-                            'usemin',
-                            'htmlmin',
-                            'connect:dist:keepalive'
-                        ]);
-                    }
-
-                    return grunt.task.run(tasks);
                 }
             });
 
-            grunt.registerTask('useminPrepareDev', function() {
-                grunt.config.set('useminPrepare', grunt.config('useminPrepareDev'));
+            grunt.registerTask('useminPrepareNomin', function() {
+                grunt.config.set('useminPrepare', grunt.config('useminPrepareNomin'));
                 grunt.task.run('useminPrepare');
             });
 
@@ -589,7 +560,87 @@
             grunt.registerTask('status', '', function() {
                 var options = { separator: ', ', color: 'yellow' };
                 grunt.log.subhead(grunt.log.wordlist(['Web server running on http://localhost:' + parseInt(gruntConfig.port)],options));
+            });
 
+            grunt.registerTask('default', '', function(target) {
+                return grunt.task.run(['serve:local']);
+            });
+
+            grunt.registerTask('serve', 'Compile then start a connect web server', function(target) {
+
+                if(!target) {
+                	target = 'local';
+                }
+
+                grunt.log.ok(['Serving ' + target]);
+ 				grunt.config('target', target);
+
+                var compile = target !== 'local' && !grunt.option('nocompile');
+                var minify 	= !((grunt.option('nomin') || target=='development' || target=='local') && !grunt.option('min'));
+
+                if (grunt.option('jshint'))
+                    grunt.config.merge({
+                        watch: {
+                            js: {
+                                files: ['app/scripts/{,*/}*.js'],
+                                tasks: ['newer:jshint:all']
+                            }
+                        }
+                    });
+
+                if (compile) {
+
+                	grunt.log.ok(['Serving ' + target]);
+
+                    if (minify) {
+
+                        var tasks = ['clean:dist',
+			                        'ngconstant:dist',
+			                        'wiredep',
+			                        'useminPrepare',
+		                            'concurrent:dist',
+		                            'autoprefixer',
+		                            'concat',
+		                            'ngAnnotate',
+		                            'copy:dist',
+		                            'filerev',
+		                            'uglify',
+		                            'cssmin',
+		                            'usemin',
+		                            'htmlmin',
+		                            'connect:dist:keepalive'
+                        ];
+                    } else {
+
+                        //If --nomin is detected then do not minify the js and css
+                        var tasks = ['clean:dist',
+			                        'ngconstant:dist',
+			                        'wiredep',
+		                        	'useminPrepareNomin',
+		                            'concurrent:dist',
+		                            'autoprefixer',
+		                            'concat',
+		                            'ngAnnotate',
+		                            'copy:dist',
+		                            'filerev',
+		                            'usemin',
+		                            'connect:dist:keepalive'
+		                        ];
+                    }
+                } else {
+                   	var tasks = ['clean:server',
+		                        'ngconstant:local',
+		                        'wiredep',
+		                        'concurrent:server',
+		                        'autoprefixer',
+		                        'copy:iconfont',
+		                        'connect:local',
+		                        'status',
+		                        'watch'
+		                    ];
+                }
+
+                return grunt.task.run(tasks);
             });
 
             grunt.registerTask('build', 'Compile', function(target, build_number) {
@@ -599,25 +650,25 @@
                     return false;
                 }
 
+                grunt.log.ok(['Building ' + target]);
+                grunt.config('target', target);
+
                 var tasks = [   'clean:dist',
-                                'ngconstant:' + target,
+                                'ngconstant:dist',
                                 'wiredep'
                             ];
 
                 //If --nomin is detected then do not minify the js and css
                 if (grunt.option('nomin') || target=='development') {
-                    tasks = grunt.util._.union(tasks, ['useminPrepareDev',
+                    tasks = grunt.util._.union(tasks, ['useminPrepareNomin',
                         'concurrent:dist',
                         'autoprefixer',
                         'concat',
                         'ngAnnotate',
                         'copy:dist',
-                        'copy:' + target,
-                        //'cdnify',
                         'filerev',
                         'usemin',
-                        'clean:cleanup',
-                        //'template'
+                        'clean:cleanup'
                     ]);
                 } else {
                     tasks = grunt.util._.union(tasks, ['useminPrepare',
@@ -626,21 +677,59 @@
                         'concat',
                         'ngAnnotate',
                         'copy:dist',
-                        'copy:' + target,
-                        //'cdnify',
                         'uglify',
                         'cssmin',
                         'filerev',
                         'usemin',
                         'htmlmin',
-                        'clean:cleanup',
-                        //'template'
+                        'clean:cleanup'
                     ]);
                 }
 
+                grunt.config.set('copy.telerik', {
+                    files : [
+                                {
+                                    expand: true,
+                                    dot: true,
+                                    cwd: '.',
+                                    dest: 'dist',
+                                    rename: function(dest, src) {
+                                        return dest + src.replace(new RegExp('telerik\/' + target), '');
+                                    },
+                                    src: [
+                                        'telerik/' + target + '/*',
+                                        'telerik/' + target + '/plugins/**/*',
+                                        'telerik/' + target + '/App_Resources/**/*'
+                                    ]
+                                }
+                    ]
+                });
+
                 tasks.push('buildjson');
+                tasks.push('copy:telerik');
 
                 return grunt.task.run(tasks);
+            });
+
+
+            grunt.registerTask('controller', 'Controller Generator', function(controller) {
+
+                grunt.config('controller',controller);
+
+                return grunt.task.run(['template:controller',
+                                        'copy:controller',
+                                        'copy:view',
+                                        'string-replace:index-controller',
+                                        'string-replace:app']);
+            });
+
+            grunt.registerTask('service', 'Service Generator', function(service) {
+
+                grunt.config('service',service);
+
+                return grunt.task.run(['template:service',
+                                        'copy:service',
+                                        'string-replace:index-service']);
             });
     }
 
