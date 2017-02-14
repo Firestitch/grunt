@@ -543,9 +543,13 @@
                                 }
                             }]
                         }
-                    },
-
-                }
+                    }
+                },
+				shell: {
+			        bower: {
+			            command: 'php -f grunt/bower.php'
+			        }
+			    }
             });
 
             grunt.registerTask('useminPrepareNomin', function() {
@@ -711,25 +715,9 @@
                 return grunt.task.run(tasks);
             });
 
+            grunt.registerTask('bower', 'Bower', function(controller) {
 
-            grunt.registerTask('controller', 'Controller Generator', function(controller) {
-
-                grunt.config('controller',controller);
-
-                return grunt.task.run(['template:controller',
-                                        'copy:controller',
-                                        'copy:view',
-                                        'string-replace:index-controller',
-                                        'string-replace:app']);
-            });
-
-            grunt.registerTask('service', 'Service Generator', function(service) {
-
-                grunt.config('service',service);
-
-                return grunt.task.run(['template:service',
-                                        'copy:service',
-                                        'string-replace:index-service']);
+                return grunt.task.run(['shell:bower']);
             });
     }
 
