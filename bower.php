@@ -4,18 +4,51 @@
 
 	$bower = json_decode(file_get_contents($file));
 
-	foreach($bower->dependencies as $name=>$version) {
+	$mode = isset($argv[1]) ? $argv[1] : "";
 
-		$component_file = $dir."bower_components/".$name."/.bower.json";
+	if($mode=="latest") {
 
-		$bower_component = json_decode(file_get_contents($component_file));
+		$result = exec("cd ".$dir." && bower --json --loglevel=warn list",$output);
 
-		$bower->dependencies->{$name} = $bower_component->version;
+		if(!$result)
+			die("Error: ".implode("",$output));
 
-		echo $name."#".$version."\n";
-	}
+		$output = json_decode(implode("",$output));
 
-	file_put_contents($file,json_encode($bower, JSON_PRETTY_PRINT));
+		$dependencies = $output->dependencies;
+
+		foreach($bower->dependencies as $name=>$version) {
+
+			if(!preg_match("/^fs-angular-/",$name))
+				continue;
+
+			$dependency = @$dependencies->$name;
+
+			if($dependency) {
+				$bower->dependencies->{$name} = $dependency->update->latest;
+				echo $name."#".$dependency->update->target." => ".$dependency->update->latest."\n";
+			}
+		}
+
+		file_put_contents($file,json_encode($bower, JSON_PRETTY_PRINT));
+
+	} elseif($mode=="resolve") {
+
+		foreach($bower->dependencies as $name=>$version) {
+
+			$component_file = $dir."bower_components/".$name."/.bower.json";
+
+			$bower_component = json_decode(file_get_contents($component_file));
+
+			$bower->dependencies->{$name} = $bower_component->version;
+
+			echo $name."#".$version."\n";
+		}
+
+		file_put_contents($file,json_encode($bower, JSON_PRETTY_PRINT));
+
+	} else
+		die("Invalid mode");
 
 	function p($value) {
 		print_r($value);

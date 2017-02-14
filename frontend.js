@@ -546,8 +546,11 @@
                     }
                 },
 				shell: {
-			        bower: {
-			            command: 'php -f grunt/bower.php'
+			        'bower-latest': {
+			            command: 'php -f grunt/bower.php latest'
+			        },
+					'bower-resolve': {
+			            command: 'php -f grunt/bower.php resolve'
 			        }
 			    }
             });
@@ -715,9 +718,10 @@
                 return grunt.task.run(tasks);
             });
 
-            grunt.registerTask('bower', 'Bower', function(controller) {
+            grunt.registerTask('bower', 'Bower', function(mode) {
 
-                return grunt.task.run(['shell:bower']);
+            	var mode = mode || 'latest'; //options = latest, resolve
+                return grunt.task.run(['shell:bower-' + mode]);
             });
     }
 
