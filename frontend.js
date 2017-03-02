@@ -561,7 +561,7 @@
             });
 
             grunt.registerTask('buildjson', 'Build JSON', function() {
-                grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '"}');
+                grunt.file.write('dist/build.json', '{"build_date":"' + new Date().toISOString() + '","update_priority":"' + arguments[0] + '"}');
             });
 
             grunt.registerTask('status', '', function() {
@@ -650,15 +650,19 @@
                 return grunt.task.run(tasks);
             });
 
-            grunt.registerTask('build', 'Compile', function(target, build_number) {
+            grunt.registerTask('build', 'Compile', function(target, update_priority, build_number) {
 
                 if (arguments.length === 0) {
                     grunt.log.error('Please specify a target to build. Options: build:development, build:staging, build:production');
                     return false;
                 }
 
+                update_priority = update_priority || 'confirm';
+
                 grunt.log.ok(['Building ' + target]);
                 grunt.config('target', target);
+                grunt.config('update_priority', update_priority);
+                grunt.config('build_number', build_number);
 
                 var tasks = [   'clean:dist',
                                 'ngconstant:dist',
@@ -712,7 +716,7 @@
                     ]
                 });
 
-                tasks.push('buildjson');
+                tasks.push('buildjson:' + update_priority);
                 tasks.push('copy:telerik');
 
                 return grunt.task.run(tasks);
