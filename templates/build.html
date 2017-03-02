@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Build Stats</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<style>
+		* { font-family: 'Open Sans', sans-serif; text-align: center; }
+		#ago { font-weight: normal; margin-left: 8px; }
+	</style>	
+</head>
+<body>
+	<h1>Last Build</h1>
+	<h2 id="ago"></h2>
+	<h3>{{- date }}</h3>
+
+	<script>
+
+		var timeSince = function(date) {
+		    if (typeof date !== 'object') {
+		        date = new Date(date);
+		    }
+
+		    var seconds = Math.floor((new Date() - date) / 1000);
+		    var intervalType;
+
+		    var interval = Math.floor(seconds / 31536000);
+		    if (interval >= 1) {
+		        intervalType = 'year';
+		    } else {
+		        interval = Math.floor(seconds / 2592000);
+		        if (interval >= 1) {
+		            intervalType = 'month';
+		        } else {
+		            interval = Math.floor(seconds / 86400);
+		            if (interval >= 1) {
+		                intervalType = 'day';
+		            } else {
+		                interval = Math.floor(seconds / 3600);
+		                if (interval >= 1) {
+		                    intervalType = "hour";
+		                } else {
+		                    interval = Math.floor(seconds / 60);
+		                    if (interval >= 1) {
+		                        intervalType = "minute";
+		                    } else {
+		                        interval = seconds;
+		                        intervalType = "second";
+		                    }
+		                }
+		            }
+		        }
+		    }
+
+		    if (interval > 1 || interval === 0) {
+		        intervalType += 's';
+		    }
+
+		    return interval + ' ' + intervalType;
+		};
+
+		var timeSinceTimer = function() { 
+
+			document.getElementById("ago").innerHTML = timeSince({{- seconds }}) + " ago";
+			setTimeout(function() {				
+				timeSinceTimer();
+			},1000);
+		};
+
+		timeSinceTimer();
+
+	</script>
+
+</body>
+</html>

@@ -52,7 +52,7 @@
 
                 template: {
 
-                    'process-html-template': {
+                    build: {
 
                         options: {
                             data: function() {
@@ -69,41 +69,8 @@
                         files: {
                             'dist/build.html': ['app/build.html']
                         }
-                    },
-
-                    'controller': {
-
-                        options: {
-                            data: function() {
-                                var data = { controller: grunt.config('controller') };
-
-                                return data;
-                            },
-                            delimiters: 'handlebars-like-delimiters'
-                        },
-                        files: {
-                            '.tmp/controller.js': ['grunt/templates/controller.js'],
-                            '.tmp/view.html': ['grunt/templates/view.html']
-                        }
-                    },
-
-                    'service': {
-
-                        options: {
-                            data: function() {
-                                var data = { service: grunt.config('service') };
-
-                                return data;
-                            },
-                            delimiters: 'handlebars-like-delimiters'
-                        },
-                        files: {
-                            '.tmp/service.js': ['grunt/templates/service.js']
-                        }
                     }
                 },
-
-
 
                 // The actual grunt server settings
                 connect: {
@@ -365,6 +332,19 @@
 
                 // Copies remaining files to places other tasks can use
                 copy: {
+                	updating: {
+                		files: [
+                                {
+                                    expand: true,
+                                    cwd: 'grunt/templates',
+                                    dest: 'dist/',
+                                    src: ['updating.html'],
+                                    rename: function(dest, src) {
+                                        return dest + 'index.html';
+                                    }
+                                }
+                            ]
+                	},
                     dist: {
                         files: [
                                 {
@@ -423,55 +403,7 @@
                                 dest: 'app/iconfont'
                             }
                         ]
-                    },
-                    controller: {
-                        files: [
-                            {
-                                expand: true,
-                                flatten: true,
-                                cwd: '.',
-                                dest: 'app/scripts/controllers/',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(new RegExp('controller'), grunt.config('controller').toLowerCase());
-                                },
-                                src: [
-                                    '.tmp/controller.js'
-                                ]
-                            }
-                        ]
-                    },
-                    view: {
-                        files: [
-                            {
-                                expand: true,
-                                flatten: true,
-                                cwd: '.',
-                                dest: 'app/views/',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(new RegExp('view'),grunt.config('controller').toLowerCase());
-                                },
-                                src: [
-                                    '.tmp/view.html'
-                                ]
-                            }
-                        ]
-                    },
-                    service: {
-                        files: [
-                            {
-                                expand: true,
-                                flatten: true,
-                                cwd: '.',
-                                dest: 'app/scripts/services/',
-                                rename: function(dest, src) {
-                                    return dest + src.replace(new RegExp('service'), grunt.config('service').toLowerCase());
-                                },
-                                src: [
-                                    '.tmp/service.js'
-                                ]
-                            }
-                        ]
-                    },
+                    }
                 },
 
                 // Run some tasks in parallel to speed up the build process
@@ -489,60 +421,6 @@
                     unit: {
                         configFile: 'test/karma.conf.js',
                         singleRun: true
-                    }
-                },
-
-                'string-replace': {
-                    'index-controller': {
-                        files: {
-                            'app/index.html': 'app/index.html'
-                        },
-                        options: {
-                            replacements: [{
-                                pattern: /<!-- endcontrollers -->/ig,
-                                replacement: function (match, p1) {
-                                    return '<script src="scripts/controllers/' + grunt.config('controller').toLowerCase() + '.js"></script>\n\t<!-- endcontrollers -->';
-                                }
-                            }]
-                        }
-                    },
-                    'index-service': {
-                        files: {
-                            'app/index.html': 'app/index.html'
-                        },
-                        options: {
-                            replacements: [{
-                                pattern: /<!-- endservices -->/ig,
-                                replacement: function (match, p1) {
-                                    return '<script src="scripts/services/' + grunt.config('service').toLowerCase() + '.js"></script>\n\t<!-- endservices -->';
-                                }
-                            }]
-                        }
-                    },
-                    app: {
-                        files: {
-                            'app/scripts/app.js': 'app/scripts/app.js'
-                        },
-                        options: {
-                            replacements: [{
-                                pattern: /\/\*\* endstates \*\*\//ig,
-                                replacement: function (match, p1) {
-                                    return  '.state(\'' + grunt.config('controller').toLowerCase() + '\', {\n' +
-                                            '		url: \'/' + grunt.config('controller').toLowerCase() + '/:param\',\n' +
-                                            '		templateUrl: \'views/' + grunt.config('controller').toLowerCase() + '.html\',\n' +
-                                            '		controller: \'' + grunt.config('controller') + 'Ctrl\',\n' +
-                                            '		params: {\n' +
-                                            '			param: { squash: true, value: null }\n' +
-                                            '		},\n' +
-                                            '		resolve: {\n' +
-                                            '			param: function($stateParams) {\n' +
-                                            '				return $stateParams.param;\n' +
-                                            '			}\n' +
-                                            '		}\n' +
-                                            '\t})\n\n\t/** endstates **/';
-                                }
-                            }]
-                        }
                     }
                 },
 				shell: {
@@ -665,6 +543,7 @@
                 grunt.config('build_number', build_number);
 
                 var tasks = [   'clean:dist',
+                				'copy:updating',
                                 'ngconstant:dist',
                                 'wiredep'
                             ];
