@@ -425,7 +425,7 @@
                 },
 				shell: {
 			        'bower-latest': {
-			            command: 'php -f grunt/bower.php latest'
+			            command: 'php -f grunt/bower.php latest && bower update'
 			        },
 					'bower-resolve': {
 			            command: 'php -f grunt/bower.php resolve'
