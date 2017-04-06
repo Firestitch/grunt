@@ -78,7 +78,7 @@
 
                     },
                     build: {
-                      src: ['app/scripts/filters/filter.js','app/scripts/directives/directive.js','app/scripts/services/service.js','.tmp/directivetemplate.js'],
+                      src: ['app/vendors/vendor.js','app/scripts/filters/filter.js','app/scripts/directives/directive.js','app/scripts/services/service.js','.tmp/directivetemplate.js'],
                       dest: '../dist/' + bower.namespace + '.js',
                     },
                 },
