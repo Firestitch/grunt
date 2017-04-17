@@ -40,7 +40,7 @@
                     },
                     build: {
                         files: ['app/**/*.{js,html}'],
-                        tasks: ['clean:buildjs','ngtemplates','concat:build']
+                        tasks: ['clean:buildjs','ngtemplates','concat:build','copy:bower']
                     },
                     ngdocs: {
                         files: ['app/scripts/{,*/}*.js'],
@@ -258,6 +258,15 @@
                                 dest: '../dist'
                             }
                         ]
+                    },
+                    bower: {
+                    	files: [{
+                                expand: true,
+                                dot: true,
+	                            cwd: 'app/bower/dist',
+	                            src: ["*.*"],
+	                            dest: '../dist'
+                            }]
                     }
                 },
 
@@ -316,6 +325,7 @@
                     'ngdocs',
                     'ngtemplates',
                     'concat:build',
+                    'copy:bower',
                     'status',
                     'watch'
                 ]);
