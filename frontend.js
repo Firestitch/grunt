@@ -9,6 +9,8 @@
         // Time how long tasks take. Can help when optimizing build times
         require('time-grunt')(grunt);
 
+		grunt.loadNpmTasks('grunt-connect-proxy');
+
         var modRewrite = require('connect-modrewrite');
 
         var gruntConfig = require('./../grunt.json');
@@ -77,6 +79,15 @@
                     options: {
                         livereload: gruntConfig.port + 30000
                     },
+		            proxies: [
+		                {
+		                    context: '/api',
+		                    host: gruntConfig.apiHost,
+		                    headers: {
+		                        "host": gruntConfig.apiHost,
+		                    },
+		                }
+		            ],
                     local: {
                         options: {
                             port: gruntConfig.port,
@@ -88,7 +99,9 @@
                             ],
                             middleware: function(connect, options) {
 
-                                return [modRewrite(['^[^\\.]*$ /index.html [L]']),
+                                return [
+                                	require('grunt-connect-proxy/lib/utils').proxyRequest,
+                                	modRewrite(['^[^\\.]*$ /index.html [L]']),
                                     connect.static('.tmp'),
                                     connect.static('app'),
                                     connect().use('/bower_components', connect.static('./bower_components'))
@@ -519,6 +532,7 @@
 		                        'concurrent:server',
 		                        'autoprefixer',
 		                        'copy:iconfont',
+		                        'configureProxies:local',
 		                        'connect:local',
 		                        'status',
 		                        'watch'
