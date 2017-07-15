@@ -19,7 +19,7 @@
 
 		foreach($bower->dependencies as $name=>$version) {
 
-			if(!preg_match("/^fs-angular-/",$name))
+			if(!preg_match("/^fs-/",$name))
 				continue;
 
 			$dependency = @$dependencies->$name;
