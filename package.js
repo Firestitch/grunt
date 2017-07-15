@@ -49,7 +49,11 @@
                     status: {
                         files: ['app/scripts/{,*/}*.js','app/styles/{,*/}*.*css'],
                         tasks: ['status']
-                    }
+                    },
+                    vendors: {
+                        files: ['app/scripts/vendors/**/*.*'],
+                        tasks: ['copy:vendors']
+                    },
                 };
 
         // Define the configuration for all the tasks
@@ -267,6 +271,14 @@
 	                            src: ["*.*"],
 	                            dest: '../dist'
                             }]
+                    },
+                    vendors: {
+                    	files: [{
+                                expand: true,
+	                            cwd: 'app/scripts/vendors',
+	                            src: ["**"],
+	                            dest: '../dist/vendors'
+                            }]
                     }
                 },
 
@@ -326,6 +338,7 @@
                     'ngtemplates',
                     'concat:build',
                     'copy:bower',
+                    'copy:vendors',
                     'status',
                     'watch'
                 ]);
