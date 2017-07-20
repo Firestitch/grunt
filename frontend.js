@@ -12,7 +12,7 @@
 		grunt.loadNpmTasks('grunt-connect-proxy');
 
         var modRewrite = require('connect-modrewrite');
-
+        var serveStatic = require('serve-static');
         var gruntConfig = require('./../grunt.json');
 
         grunt.template.addDelimiters('handlebars-like-delimiters', '{{', '}}');
@@ -39,7 +39,7 @@
                     },
                     livereload: {
                         options: {
-                            livereload: '<%= connect.options.livereload %>'
+                            livereload: gruntConfig.port + 30000
                         },
                         files: [
                             '.tmp/styles/{,*/}*.css',
@@ -77,7 +77,8 @@
                 // The actual grunt server settings
                 connect: {
                     options: {
-                        livereload: gruntConfig.port + 30000
+                        livereload: gruntConfig.port + 30000,
+                        ignore: [/stream/, /download/, /pdf/, /zip/]
                     },
 		            proxies: [
 		                {
@@ -102,9 +103,9 @@
                                 return [
                                 	require('grunt-connect-proxy/lib/utils').proxyRequest,
                                 	modRewrite(['^[^\\.]*$ /index.html [L]']),
-                                    connect.static('.tmp'),
-                                    connect.static('app'),
-                                    connect().use('/bower_components', connect.static('./bower_components'))
+                                    serveStatic('.tmp'),
+                                    serveStatic('app'),
+                                    connect().use('/bower_components', serveStatic('./bower_components'))
                                 ];
                             }
                         }
@@ -116,12 +117,12 @@
                             base: 'dist',
                             middleware: function(connect, options) {
                                 return [ modRewrite(['^[^\\.]*$ /index.html [L]']),
-						                connect.static('.tmp'),
+						                serveStatic('.tmp'),
 						                connect().use(
 						                    '/bower_components',
-						                    connect.static('./bower_components')
+						                    serveStatic('./bower_components')
 						                ),
-						                connect.static('dist')
+						                serveStatic('dist')
                                 ];
                             }
                         }
