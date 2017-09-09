@@ -95,8 +95,10 @@
                     local: {
                         options: {
                             port: parseInt(bower.port),
-                            hostname: 'localhost',
-                            open: true,
+                            hostname: '*',
+                            open: {
+				                target: 'http://localhost:' + parseInt(bower.port)
+				            },
                             base: [
                                 '.tmp',
                                 '<%= yeoman.app %>'
