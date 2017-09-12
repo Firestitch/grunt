@@ -92,8 +92,10 @@
                     local: {
                         options: {
                             port: gruntConfig.port,
-                            hostname: 'localhost',
-                            open: true,
+                            hostname: '*',
+                            open: {
+				                target: 'http://localhost:' + parseInt(gruntConfig.port)
+				            },
                             base: [
                                 '.tmp',
                                 'app'
