@@ -26,10 +26,6 @@
                         files: ['bower.json'],
                         tasks: ['wiredep']
                     },
-                    jsTest: {
-                        files: ['test/spec/{,*/}*.js'],
-                        tasks: ['newer:jshint:test', 'karma']
-                    },
                     compass: {
                         files: ['app/styles/{,*/}*.{scss,sass}'],
                         tasks: ['compass:server', 'autoprefixer']
@@ -42,13 +38,8 @@
                             livereload: gruntConfig.port + 30000
                         },
                         files: [
-                            '.tmp/styles/{,*/}*.css',
-                            'app/images/{,*/}*.{png,jpg,jpeg,gif,webp}'
+                            '.tmp/styles/{,*/}*.css'
                         ]
-                    },
-                    status: {
-                        files: ['app/scripts/{,*/}*.js','app/styles/{,*/}*.*css'],
-                        tasks: ['status']
                     }
                 },
 
