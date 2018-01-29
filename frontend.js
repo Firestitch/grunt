@@ -68,8 +68,10 @@
                 // The actual grunt server settings
                 connect: {
                     options: {
-                        livereload: gruntConfig.port + 30000,
-                        ignore: [/stream/, /download/, /pdf/, /zip/]
+                        livereload: {
+                        	port: gruntConfig.port + 30000,
+                        	ignore: [/stream/, /download/, /pdf/, /zip/, /api/]
+                        }
                     },
 		            proxies: [
 		                {
@@ -77,7 +79,7 @@
 		                    host: gruntConfig.apiHost,
 		                    headers: {
 		                        "host": gruntConfig.apiHost,
-		                    },
+		                    }
 		                }
 		            ],
                     local: {
