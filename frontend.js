@@ -370,7 +370,8 @@
                                         'images/*',
                                         'images/**/*',
                                         'fonts/**/*',
-                                        'styles/fonts**/*'
+                                        'styles/fonts**/*',
+                                        'assets/*'
                                     ]
                                 },
                                 {
