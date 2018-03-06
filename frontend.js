@@ -371,7 +371,8 @@
                                         'images/**/*',
                                         'fonts/**/*',
                                         'styles/fonts**/*',
-                                        'assets/*'
+                                        'assets/*',
+                                        'assets/**/*'
                                     ]
                                 },
                                 {
