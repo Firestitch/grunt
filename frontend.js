@@ -281,7 +281,7 @@
                         constants: function() {
                             return {
                                 CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-                                BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number') }
+                                BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number'), 'build_time': (new Date()).getTime() },
                             }
                         },
                         options: {
@@ -292,7 +292,7 @@
                         constants: function() {
                             return {
                             	CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-                            	BUILD: { 'build': grunt.config('target'), 'build_number':grunt.option('build_number') }
+                            	BUILD: { 'build': grunt.config('target'), 'build_number':grunt.option('build_number'), 'build_time': (new Date()).getTime() }
                             }
                         },
                         options: {
