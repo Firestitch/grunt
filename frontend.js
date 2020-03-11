@@ -375,6 +375,7 @@
                                         'images/*',
                                         'images/**/*',
                                         'fonts/**/*',
+                                        'build.json',
                                         'styles/fonts**/*'
                                     ]
                                 },

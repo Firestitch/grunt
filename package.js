@@ -264,12 +264,21 @@
                         ]
                     },
                     bower: {
-                    	files: [{
+                        files: [{
                                 expand: true,
                                 dot: true,
-	                            cwd: 'app/bower/dist',
-	                            src: ["*.*"],
-	                            dest: '../dist'
+                                cwd: 'app/bower/dist',
+                                src: ["*.*"],
+                                dest: '../dist'
+                            }]
+                    },
+                    buildjson: {
+                        files: [{
+                                expand: true,
+                                dot: true,
+                                cwd: 'app/build.json',
+                                src: ["*.*"],
+                                dest: '../dist'
                             }]
                     },
                     vendors: {
@@ -338,6 +347,7 @@
                     'ngtemplates',
                     'concat:build',
                     'copy:bower',
+                    'copy:buildjson',
                     'copy:vendors',
                     'status',
                     'watch'
