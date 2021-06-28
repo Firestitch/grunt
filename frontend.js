@@ -281,7 +281,7 @@
           constants: function () {
             return {
               CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-              APP_CONFIG: grunt.file.readJSON('app/app-config.json'),
+              APP_CONFIG: grunt.file.readJSON('app-config.json'),
               BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number'), 'build_time': (new Date()).getTime() },
             }
           },
@@ -293,7 +293,7 @@
           constants: function () {
             return {
               CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-              APP_CONFIG: grunt.file.readJSON('app/app-config.json'),
+              APP_CONFIG: grunt.file.readJSON('app-config.json'),
               BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number'), 'build_time': (new Date()).getTime() }
             }
           },
