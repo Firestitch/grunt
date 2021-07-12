@@ -15,6 +15,17 @@
     var serveStatic = require('serve-static');
     var gruntConfig = require('./../grunt.json');
 
+    var appConfig = {
+        primaryColor: 'DC1F00',
+        accentColor: 'DC1F00',
+        logo: "./images/talent-logo.png",
+        favicon: './images/favicons/talent-favicon.png'
+    };
+
+    if (grunt.file.exists('app-config.json')) {
+      appConfig = grunt.file.readJSON('app-config.json');
+    }
+
     grunt.template.addDelimiters('handlebars-like-delimiters', '{{', '}}');
 
     // Define the configuration for all the tasks
@@ -281,7 +292,7 @@
           constants: function () {
             return {
               CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-              APP_CONFIG: grunt.file.readJSON('app-config.json'),
+              APP_CONFIG: appConfig,
               BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number'), 'build_time': (new Date()).getTime() },
             }
           },
@@ -293,7 +304,7 @@
           constants: function () {
             return {
               CONFIG: grunt.file.readJSON('config/' + grunt.config('target') + '.json'),
-              APP_CONFIG: grunt.file.readJSON('app-config.json'),
+              APP_CONFIG: appConfig,
               BUILD: { 'build': grunt.config('target'), 'build_number': grunt.option('build_number'), 'build_time': (new Date()).getTime() }
             }
           },
